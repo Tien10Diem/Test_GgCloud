@@ -7,7 +7,7 @@ from datetime import datetime
 # === CONFIG ===
 SERVICE_ACCOUNT_FILE = "service_account.json"  # 🔧 Dùng file thay vì biến môi trường
 SCOPES = ['https://www.googleapis.com/auth/drive']
-DRIVE_FOLDER_ID = '1M93UsOD7-Edm77CdZGDHkvR3aMIgWemx'  # Thay bằng ID thư mục Google Drive của bạn
+DRIVE_FOLDER_ID = '1M93UsOD7-Edm77CdZGDHkvR3aMmk9isP'  # Thay bằng ID thư mục Google Drive của bạn
 
 def upload_to_drive():
     print("🚀 Bắt đầu upload lên Google Drive...")
