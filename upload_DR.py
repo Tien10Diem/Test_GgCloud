@@ -7,7 +7,7 @@ from googleapiclient.http import MediaFileUpload
 # === CONFIG ===
 SERVICE_ACCOUNT_FILE = 'service_account.json'  # hoặc thay bằng biến môi trường nếu muốn
 SCOPES = ['https://www.googleapis.com/auth/drive']
-FOLDER_ID = '1M93UsOD7-Edm77CdZGDHkvR3aMmk9isP'  # Folder ID trên Google Drive
+FOLDER_ID = '1gf3MFOaHj75BzhLj8O7jN0utcwo_4jE7'  # Folder ID trên Google Drive
 FILE_NAME = 'crypto_full_data.csv'  # Tên file cần upload
 
 def upload_to_drive():
