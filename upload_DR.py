@@ -2,37 +2,35 @@ from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 import os
-from datetime import datetime
-
-# === CONFIG ===
-SERVICE_ACCOUNT_FILE = "service_account.json"  # 🔧 Dùng file thay vì biến môi trường
-SCOPES = ['https://www.googleapis.com/auth/drive']
-DRIVE_FOLDER_ID = '1M93UsOD7-Edm77CdZGDHkvR3aMmk9isP'  # Thay bằng ID thư mục Google Drive của bạn
+import json
 
 def upload_to_drive():
-    print("🚀 Bắt đầu upload lên Google Drive...")
-
-    # Load credentials từ file
-    credentials = service_account.Credentials.from_service_account_file(
-        SERVICE_ACCOUNT_FILE, scopes=SCOPES
+    # Tải credentials từ biến môi trường hoặc file
+    creds = service_account.Credentials.from_service_account_file(
+        'service_account.json',
+        scopes=['https://www.googleapis.com/auth/drive']
     )
 
-    service = build('drive', 'v3', credentials=credentials)
+    # Tạo dịch vụ Drive
+    service = build('drive', 'v3', credentials=creds)
 
-    file_name = 'crypto_full_data.csv'
+    # Đường dẫn tệp cần upload
+    file_path = 'crypto_full_data.csv'
+
+    # Cấu hình metadata cho file mới
     file_metadata = {
-        'name': f'crypto_full_data_{datetime.now().strftime("%Y%m%d_%H%M%S")}.csv',
-        'parents': [DRIVE_FOLDER_ID]
+        'name': 'crypto_full_data.csv',
+        'parents': ['1M93UsOD7-Edm77CdZGDHkvR3aMmk9isP']  # Folder ID
     }
-    media = MediaFileUpload(file_name, mimetype='text/csv')
 
+    # Cấu hình nội dung file
+    media = MediaFileUpload(file_path, mimetype='text/csv')
+
+    # Upload file
     file = service.files().create(
         body=file_metadata,
         media_body=media,
         fields='id'
     ).execute()
 
-    print(f"✅ Đã upload file lên Drive với ID: {file.get('id')}")
-
-if __name__ == "__main__":
-    upload_to_drive()
+    print(f"✅ File uploaded. File ID: {file.get('id')}")
