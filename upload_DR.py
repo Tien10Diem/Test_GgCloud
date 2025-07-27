@@ -1,36 +1,42 @@
+import os
+import json
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
-import os
-import json
+
+# === CONFIG ===
+SERVICE_ACCOUNT_FILE = 'service_account.json'  # hoặc thay bằng biến môi trường nếu muốn
+SCOPES = ['https://www.googleapis.com/auth/drive']
+FOLDER_ID = '1M93UsOD7-Edm77CdZGDHkvR3aMmk9isP'  # Folder ID trên Google Drive
+FILE_NAME = 'crypto_full_data.csv'  # Tên file cần upload
 
 def upload_to_drive():
-    # Tải credentials từ biến môi trường hoặc file
-    creds = service_account.Credentials.from_service_account_file(
-        'service_account.json',
-        scopes=['https://www.googleapis.com/auth/drive']
-    )
+    print("🚀 Bắt đầu upload lên Google Drive...")
 
-    # Tạo dịch vụ Drive
-    service = build('drive', 'v3', credentials=creds)
+    # Load service account key từ file
+    credentials = service_account.Credentials.from_service_account_file(
+        SERVICE_ACCOUNT_FILE, scopes=SCOPES)
 
-    # Đường dẫn tệp cần upload
-    file_path = 'crypto_full_data.csv'
+    # Tạo service Drive
+    service = build('drive', 'v3', credentials=credentials)
 
-    # Cấu hình metadata cho file mới
+    # Metadata của file (gồm thư mục cha)
     file_metadata = {
-        'name': 'crypto_full_data.csv',
-        'parents': ['1M93UsOD7-Edm77CdZGDHkvR3aMmk9isP']  # Folder ID
+        'name': FILE_NAME,
+        'parents': [FOLDER_ID]
     }
 
-    # Cấu hình nội dung file
-    media = MediaFileUpload(file_path, mimetype='text/csv')
+    # Chuẩn bị file để upload
+    media = MediaFileUpload(FILE_NAME, mimetype='text/csv', resumable=True)
 
-    # Upload file
-    file = service.files().create(
+    # Tạo file mới (KHÔNG dùng update nếu bạn không biết file ID cũ)
+    uploaded_file = service.files().create(
         body=file_metadata,
         media_body=media,
         fields='id'
     ).execute()
 
-    print(f"✅ File uploaded. File ID: {file.get('id')}")
+    print(f"✅ Đã upload file với ID: {uploaded_file.get('id')}")
+
+if __name__ == '__main__':
+    upload_to_drive()
